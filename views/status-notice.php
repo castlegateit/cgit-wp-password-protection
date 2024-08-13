@@ -6,6 +6,6 @@ if (!isset($message) || !$message) {
 
 ?>
 
-<div class="notice notice-info">
+<div class="notice notice-warning">
     <p><?= $message ?></p>
 </div>
