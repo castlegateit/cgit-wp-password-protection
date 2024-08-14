@@ -7,5 +7,5 @@ if (!isset($message) || !$message) {
 ?>
 
 <div class="notice notice-warning">
-    <p><?= $message ?></p>
+    <p><?= esc_html($message) ?></p>
 </div>

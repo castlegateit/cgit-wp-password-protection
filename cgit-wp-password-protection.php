@@ -32,7 +32,7 @@ add_action('init', function () {
     // Restrict site to logged in users
     if ($mode === 'login') {
         if (!is_user_logged_in()) {
-            wp_die('You must be logged in to view this site.', 'Access Denied', 403);
+            wp_die(__('You must be logged in to view this site.'), __('Access Denied'), 403);
         }
 
         return;
@@ -54,7 +54,7 @@ add_action('init', function () {
                 return;
             }
 
-            $error = 'Incorrect password';
+            $error = __('Incorrect password');
         }
 
         http_response_code(403);
@@ -66,8 +66,8 @@ add_action('init', function () {
 // Show an admin notice when access to the site is restricted
 add_action('admin_notices', function () {
     $message = match (get_option('cgit_wp_password_protection_mode')) {
-        'login' => 'This site is currently restricted to logged in users.',
-        'password' => 'This site is currently password protected.',
+        'login' => __('This site is currently restricted to logged in users.'),
+        'password' => __('This site is currently password protected.'),
         default => null,
     };
 
@@ -110,8 +110,8 @@ add_action('admin_init', function () {
 add_action('admin_menu', function () {
     add_submenu_page(
         'options-general.php',
-        'Password Protection',
-        'Password Protection',
+        __('Password Protection'),
+        __('Password Protection'),
         'activate_plugins',
         'cgit-wp-password-protection',
         function () {

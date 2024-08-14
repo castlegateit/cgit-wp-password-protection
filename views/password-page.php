@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Access Denied</title>
+        <title><?= esc_html__('Access Denied') ?></title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -119,11 +119,11 @@
 
                 ?>
 
-                <label for="password">Enter your password to view the site</label>
+                <label for="password"><?= esc_html__('Enter your password to view the site') ?></label>
 
                 <div class="group">
                     <input type="password" name="password" id="password" placeholder="Password">
-                    <button type="submit" name="cgit_wp_password_protection_submit" value="1">Enter</button>
+                    <button type="submit" name="cgit_wp_password_protection_submit" value="1"><?= esc_html__('Enter') ?></button>
                 </div>
             </form>
         </main>
