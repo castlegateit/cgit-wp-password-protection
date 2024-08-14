@@ -1,14 +1,15 @@
 <?php
 
 /**
- * Plugin Name: Castlegate IT WP Password Protection
- * Plugin URI:  https://github.com/castlegateit/cgit-wp-password-protection
- * Description: Password protect a WordPress site.
- * Version:     1.0.0
- * Author:      Castlegate IT
- * Author URI:  https://www.castlegateit.co.uk/
- * License:     MIT
- * Update URI:  https://github.com/castlegateit/cgit-wp-password-protection
+ * Plugin Name:  Castlegate IT WP Password Protection
+ * Plugin URI:   https://github.com/castlegateit/cgit-wp-password-protection
+ * Description:  Password protect a WordPress site.
+ * Version:      1.0.0
+ * Requires PHP: 8.2
+ * Author:       Castlegate IT
+ * Author URI:   https://www.castlegateit.co.uk/
+ * License:      MIT
+ * Update URI:   https://github.com/castlegateit/cgit-wp-password-protection
  */
 
 if (!defined('ABSPATH')) {
