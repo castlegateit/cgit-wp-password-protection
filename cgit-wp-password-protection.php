@@ -4,7 +4,7 @@
  * Plugin Name:  Castlegate IT WP Password Protection
  * Plugin URI:   https://github.com/castlegateit/cgit-wp-password-protection
  * Description:  Password protect a WordPress site.
- * Version:      1.0.1
+ * Version:      1.1.0
  * Requires PHP: 8.2
  * Author:       Castlegate IT
  * Author URI:   https://www.castlegateit.co.uk/
@@ -29,37 +29,44 @@ add_action('init', function () {
 
     $mode = get_option('cgit_wp_password_protection_mode');
 
-    // Restrict site to logged in users
-    if ($mode === 'login') {
-        if (!is_user_logged_in()) {
-            wp_die(__('You must be logged in to view this site.'), __('Access Denied'), 403);
-        }
-
-        return;
-    }
-
-    // Password protect site
-    if ($mode === 'password') {
-        if (isset($_COOKIE['cgit_wp_password_protection'])) {
-            return;
-        }
-
-        $password = $_POST['password'] ?? null;
-        $submitted = isset($_POST['cgit_wp_password_protection_submit']);
-        $error = null;
-
-        if ($submitted && is_string($password)) {
-            if (get_option('cgit_wp_password_protection_password') === $password) {
-                setcookie('cgit_wp_password_protection', 1, time() + (60 * 60 * 24), '/');
+    switch ($mode) {
+        // Restrict site to logged in users
+        case 'login':
+            if (is_user_logged_in() || is_login()) {
                 return;
             }
 
-            $error = __('Incorrect password');
-        }
+            wp_die(__('You must be logged in to view this site.'), __('Access Denied'), 403);
 
-        http_response_code(403);
-        include CGIT_WP_PASSWORD_PROTECTION_PLUGIN_DIR . '/views/password-page.php';
-        exit;
+        // Password protect site
+        case 'password':
+        case 'login_or_password':
+            // Allow access to users who have submitted the password
+            if (isset($_COOKIE['cgit_wp_password_protection'])) {
+                return;
+            }
+
+            // Allow access to logged in users
+            if ($mode === 'login_or_password' && (is_user_logged_in() || is_login())) {
+                return;
+            }
+
+            $password = $_POST['password'] ?? null;
+            $submitted = isset($_POST['cgit_wp_password_protection_submit']);
+            $error = null;
+
+            if ($submitted && is_string($password)) {
+                if (get_option('cgit_wp_password_protection_password') === $password) {
+                    setcookie('cgit_wp_password_protection', 1, time() + (60 * 60 * 24), '/');
+                    return;
+                }
+
+                $error = __('Incorrect password');
+            }
+
+            http_response_code(403);
+            include CGIT_WP_PASSWORD_PROTECTION_PLUGIN_DIR . '/views/password-page.php';
+            exit;
     }
 });
 
@@ -68,6 +75,7 @@ add_action('admin_notices', function () {
     $message = match (get_option('cgit_wp_password_protection_mode')) {
         'login' => __('This site is currently restricted to logged in users.'),
         'password' => __('This site is currently password protected.'),
+        'login_or_password' => __('This site is currently password protected.'),
         default => null,
     };
 
@@ -94,7 +102,7 @@ add_action('admin_init', function () {
     $mode = $_POST['mode'] ?? null;
     $password = $_POST['password'] ?? null;
 
-    if (!in_array($mode, ['disabled', 'login', 'password'])) {
+    if (!in_array($mode, ['disabled', 'login', 'password', 'login_or_password'])) {
         $mode = 'disabled';
     }
 
@@ -124,7 +132,7 @@ add_action('admin_menu', function () {
                 $password = $_POST['password'] ?? $password;
             }
 
-            if (!$mode || !in_array($mode, ['disabled', 'login', 'password'])) {
+            if (!$mode || !in_array($mode, ['disabled', 'login', 'password', 'login_or_password'])) {
                 $mode = 'disabled';
             }
 

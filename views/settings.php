@@ -42,6 +42,13 @@ if (!isset($nonce) || !isset($mode) || !isset($password)) {
                         </p>
 
                         <p>
+                            <label>
+                                <input type="radio" name="mode" value="login_or_password" <?= $mode === 'login_or_password' ? 'checked' : '' ?>>
+                                <?= esc_html__('Password or WordPress user account') ?>
+                            </label>
+                        </p>
+
+                        <p>
                             <label for="password" class="screen-reader-text"><?= esc_html__('Password') ?></label>
                             <input type="text" name="password" id="password" placeholder="Password" value="<?= esc_attr($password) ?>">
                         </p>
