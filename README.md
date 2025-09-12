@@ -9,6 +9,13 @@ This plugin provides simple password protection for staging sites. You can find 
 
 When the third or fourth option is selected, users will need to re-enter the common password after 24 hours.
 
+## Exceptions
+
+Exceptions are made for a few URLs and endpoints:
+
+* Cron requests (wp-cron.php)
+* REST API requests (^/wp-json/*)
+
 ## License
 
 Released under the [MIT License](https://opensource.org/licenses/MIT). See [LICENSE](LICENSE) for details.

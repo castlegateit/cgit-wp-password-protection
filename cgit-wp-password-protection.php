@@ -4,7 +4,7 @@
  * Plugin Name:  Castlegate IT WP Password Protection
  * Plugin URI:   https://github.com/castlegateit/cgit-wp-password-protection
  * Description:  Password protect a WordPress site.
- * Version:      1.1.0
+ * Version:      1.2.0
  * Requires PHP: 8.2
  * Author:       Castlegate IT
  * Author URI:   https://www.castlegateit.co.uk/
@@ -16,14 +16,19 @@ if (!defined('ABSPATH')) {
     wp_die('Access denied');
 }
 
-define('CGIT_WP_PASSWORD_PROTECTION_VERSION', '1.0.1');
+define('CGIT_WP_PASSWORD_PROTECTION_VERSION', '1.2.0');
 define('CGIT_WP_PASSWORD_PROTECTION_PLUGIN_FILE', __FILE__);
 define('CGIT_WP_PASSWORD_PROTECTION_PLUGIN_DIR', __DIR__);
 
 // Restrict access to the site and/or print the site password form based on the
 // current plugin settings.
 add_action('init', function () {
-    if (is_admin() || (defined('WP_CLI') && WP_CLI)) {
+    $is_admin  = is_admin();
+    $is_wp_cli = (defined('WP_CLI') && WP_CLI);
+    $is_cron   = (defined('DOING_CRON') && DOING_CRON);
+    $is_rest =  is_rest_api_request();
+
+    if ($is_admin || $is_wp_cli || $is_cron || $is_rest) {
         return;
     }
 
@@ -144,3 +149,46 @@ add_action('admin_menu', function () {
         }
     );
 });
+
+// Detect REST API endpoint URLs
+function is_rest_api_request(): bool {
+    // Get path part of current request (no query string)
+    $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+    if (!$request_path) {
+        return false;
+    }
+
+    // Get WP installation path relative to domain root
+    $home_path = parse_url(home_url(), PHP_URL_PATH);
+    if (!$home_path) {
+        $home_path = '/';
+    }
+
+    // Ensure both paths have a leading slash and no trailing slash
+    $request_path = '/' . ltrim($request_path, '/');
+    $home_path = '/' . trim($home_path, '/');
+
+    if ($home_path !== '/' && str_starts_with($request_path, $home_path)) {
+        // Strip the subdirectory prefix so we're comparing relative paths
+        $request_path = substr($request_path, strlen($home_path));
+        if (!$request_path) {
+            $request_path = '/';
+        }
+    }
+
+    // Get REST prefix (default is 'wp-json')
+    $prefix = function_exists('rest_get_url_prefix') ? rest_get_url_prefix() : 'wp-json';
+
+    // Must start with /wp-json or exactly /wp-json
+    if (str_starts_with($request_path, '/' . $prefix . '/') || $request_path === '/'.$prefix) {
+        return true;
+    }
+
+    // Fallback: ?rest_route=/ style requests (plain permalinks)
+    if (isset($_GET['rest_route']) && str_starts_with($_GET['rest_route'], '/')) {
+        return true;
+    }
+
+    return false;
+}
