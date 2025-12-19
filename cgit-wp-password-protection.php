@@ -4,7 +4,7 @@
  * Plugin Name:  Castlegate IT WP Password Protection
  * Plugin URI:   https://github.com/castlegateit/cgit-wp-password-protection
  * Description:  Password protect a WordPress site.
- * Version:      1.2.1
+ * Version:      1.2.2
  * Requires PHP: 8.2
  * Author:       Castlegate IT
  * Author URI:   https://www.castlegateit.co.uk/
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
     wp_die('Access denied');
 }
 
-define('CGIT_WP_PASSWORD_PROTECTION_VERSION', '1.2.1');
+define('CGIT_WP_PASSWORD_PROTECTION_VERSION', '1.2.2');
 define('CGIT_WP_PASSWORD_PROTECTION_PLUGIN_FILE', __FILE__);
 define('CGIT_WP_PASSWORD_PROTECTION_PLUGIN_DIR', __DIR__);
 

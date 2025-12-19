@@ -109,7 +109,7 @@
             <form action="" method="post">
                 <?php
 
-                if ($error) {
+                if (isset($error) && $error) {
                     ?>
                     <div class="message error">
                         <?= $error ?>
